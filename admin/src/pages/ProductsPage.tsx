@@ -1,0 +1,191 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import adminApi from '../api/client';
+import type { Product } from '../types';
+
+const emptyProduct = {
+  name: '',
+  description: '',
+  price: '',
+  salePrice: '',
+  category: '',
+  stock: '',
+  images: '',
+  tags: '',
+  isFeatured: false,
+};
+
+type FormValues = typeof emptyProduct;
+
+const ProductsPage = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editing, setEditing] = useState<Product | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-products'],
+    queryFn: async () => {
+      const { data: response } = await adminApi.get<{ products: Product[] }>('/products', {
+        params: { limit: 100 },
+      });
+      return response.products;
+    },
+  });
+
+  const form = useForm<FormValues>({ defaultValues: emptyProduct });
+
+  const saveProduct = useMutation({
+    mutationFn: (payload: Partial<Product>) =>
+      editing ? adminApi.put(`/products/${editing._id}`, payload) : adminApi.post('/products', payload),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      setDrawerOpen(false);
+      setEditing(null);
+      form.reset(emptyProduct);
+    },
+  });
+
+  const deleteProduct = useMutation({
+    mutationFn: (id: string) => adminApi.delete(`/products/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-products'] }),
+  });
+
+  const openDrawer = (product?: Product) => {
+    if (product) {
+      setEditing(product);
+      form.reset({
+        name: product.name,
+        description: product.description,
+        price: String(product.price),
+        salePrice: product.salePrice ? String(product.salePrice) : '',
+        category: product.category ?? '',
+        stock: String(product.stock ?? 0),
+        images: product.images?.join(', ') ?? '',
+        tags: product.tags?.join(', ') ?? '',
+        isFeatured: Boolean(product.isFeatured),
+      });
+    } else {
+      setEditing(null);
+      form.reset(emptyProduct);
+    }
+    setDrawerOpen(true);
+  };
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    const payload: Partial<Product> = {
+      name: values.name,
+      description: values.description,
+      price: Number(values.price),
+      salePrice: values.salePrice ? Number(values.salePrice) : undefined,
+      category: values.category,
+      stock: Number(values.stock || 0),
+      images: values.images ? values.images.split(',').map((img) => img.trim()).filter(Boolean) : [],
+      tags: values.tags ? values.tags.split(',').map((tag) => tag.trim()).filter(Boolean) : [],
+      isFeatured: values.isFeatured,
+    };
+    await saveProduct.mutateAsync(payload);
+  });
+
+  return (
+    <section>
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">Products</p>
+          <h3>Catalog management</h3>
+        </div>
+        <button type="button" className="btn btn-primary" onClick={() => openDrawer()}>
+          <Plus size={16} />
+          New product
+        </button>
+      </div>
+      {isLoading ? (
+        <div className="page-center">
+          <div className="spinner" />
+        </div>
+      ) : (
+        <div className="data-table product-table">
+          <div className="table-head">
+            <span>Name</span>
+            <span>Category</span>
+            <span>Price</span>
+            <span>Stock</span>
+            <span>Featured</span>
+            <span>Actions</span>
+          </div>
+          {data?.map((product) => (
+            <div key={product._id} className="table-row">
+              <span>{product.name}</span>
+              <span>{product.category}</span>
+              <span>${product.salePrice ?? product.price}</span>
+              <span>{product.stock}</span>
+              <span>{product.isFeatured ? 'Yes' : 'No'}</span>
+              <div className="row-actions">
+                <button type="button" className="btn-icon" onClick={() => openDrawer(product)}>
+                  <Pencil size={16} />
+                </button>
+                <button type="button" className="btn-icon" onClick={() => deleteProduct.mutate(product._id)}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {drawerOpen && (
+        <div className="drawer">
+          <div className="drawer-card card">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">{editing ? 'Edit product' : 'New product'}</p>
+                <h3>{editing ? editing.name : 'Create a product'}</h3>
+              </div>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  setDrawerOpen(false);
+                  setEditing(null);
+                  form.reset(emptyProduct);
+                }}
+              >
+                Close
+              </button>
+            </div>
+            <form onSubmit={onSubmit} className="form-grid">
+              {(['name', 'description', 'price', 'salePrice', 'category', 'stock'] as const).map((field) => (
+                <label key={field} className={field === 'description' ? 'full' : ''}>
+                  <span>{field}</span>
+                  {field === 'description' ? (
+                    <textarea rows={3} {...form.register(field)} />
+                  ) : (
+                    <input type={field.includes('price') || field === 'stock' ? 'number' : 'text'} {...form.register(field)} />
+                  )}
+                </label>
+              ))}
+              <label className="full">
+                <span>Images (comma separated)</span>
+                <textarea rows={2} {...form.register('images')} />
+              </label>
+              <label className="full">
+                <span>Tags (comma separated)</span>
+                <input type="text" {...form.register('tags')} />
+              </label>
+              <label className="toggle full">
+                <input type="checkbox" {...form.register('isFeatured')} />
+                <span>Mark as featured</span>
+              </label>
+              <button type="submit" className="btn btn-primary" disabled={saveProduct.isPending}>
+                {saveProduct.isPending ? 'Saving…' : 'Save product'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+export default ProductsPage;
