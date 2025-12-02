@@ -7,17 +7,22 @@ interface Props {
   icon?: ReactNode;
 }
 
-const StatCard = ({ label, value, delta, icon }: Props) => (
-  <article className="stat-card">
-    <div>
-      <p className="stat-label">{label}</p>
-      <h3>{value}</h3>
-    </div>
-    <div className="stat-meta">
-      {delta && <span className="badge success">{delta}</span>}
-      {icon}
-    </div>
-  </article>
-);
+const StatCard = ({ label, value, delta, icon }: Props) => {
+  const isNegative = delta?.startsWith('-');
+  const badgeVariant = isNegative ? 'pending' : 'success';
+  
+  return (
+    <article className="stat-card">
+      <div>
+        <p className="stat-label">{label}</p>
+        <h3>{value}</h3>
+        {delta && <span className={`badge ${badgeVariant}`} style={{ marginTop: '0.5rem' }}>{delta}</span>}
+      </div>
+      <div className="stat-meta">
+        {icon}
+      </div>
+    </article>
+  );
+};
 
 export default StatCard;
