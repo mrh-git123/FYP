@@ -5,6 +5,14 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import adminApi from '../api/client';
 import type { Product } from '../types';
 
+// Categories must match backend seed data
+const categories = [
+  'Bags',
+  'Electronics',
+  'Home',
+  'Shoes'
+];
+
 const emptyProduct = {
   name: '',
   description: '',
@@ -192,7 +200,14 @@ const ProductsPage = () => {
                 <div className="form-row">
                   <label className="form-field">
                     <span className="field-label">Category</span>
-                    <input type="text" placeholder="e.g., Electronics, Fashion" {...form.register('category')} />
+                    <select {...form.register('category')}>
+                      <option value="">Select a category</option>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                   <label className="form-field">
                     <span className="field-label">Stock</span>

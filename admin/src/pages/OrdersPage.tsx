@@ -83,7 +83,7 @@ const OrdersPage = () => {
                 value={order.status}
                 onChange={(event) => updateOrder.mutate({ id: order._id, status: event.currentTarget.value })}
               >
-                {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map((status) => (
+                {['pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled'].map((status) => (
                   <option key={status} value={status}>
                     {status}
                   </option>
@@ -93,7 +93,7 @@ const OrdersPage = () => {
                 value={order.paymentStatus}
                 onChange={(event) => updateOrder.mutate({ id: order._id, paymentStatus: event.currentTarget.value })}
               >
-                {['pending', 'paid', 'refunded'].map((status) => (
+                {['pending', 'paid', 'failed', 'refunded'].map((status) => (
                   <option key={status} value={status}>
                     {status}
                   </option>

@@ -14,8 +14,10 @@ const StatusBadge = ({ status }: Props) => {
         return 'pending';
       case 'cancelled':
       case 'refunded':
+      case 'failed':
         return 'danger';
-      case 'processing':
+      case 'confirmed':
+      case 'packed':
       case 'shipped':
         return 'info';
       default:

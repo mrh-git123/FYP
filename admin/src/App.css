@@ -451,18 +451,51 @@
   position: fixed;
   inset: 0;
   background: rgba(5, 8, 16, 0.85);
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   backdrop-filter: blur(12px);
   z-index: 50;
   animation: fadeIn 0.3s ease;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
 @keyframes fadeIn {
-  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
 .drawer-card {
-  width: min(800px, 92vw);\n  max-height: 90vh;\n  overflow-y: auto;\n  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);\n  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);\n}
+  width: min(800px, 100%);
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  margin: auto;
+}
+
+.drawer-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.drawer-card::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 4px;
+}
+
+.drawer-card::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 4px;
+}
+
+.drawer-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
+}
 
 @keyframes slideUp {\n  from {\n    opacity: 0;\n    transform: translateY(40px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}
 
@@ -958,7 +991,8 @@
 }
 
 .form-field input,
-.form-field textarea {
+.form-field textarea,
+.form-field select {
   padding: 0.75rem 1rem;
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -969,8 +1003,25 @@
   font-family: inherit;
 }
 
+.form-field select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px;
+  padding-right: 2.5rem;
+}
+
+.form-field select option {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.5rem;
+}
+
 .form-field input:focus,
-.form-field textarea:focus {
+.form-field textarea:focus,
+.form-field select:focus {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
@@ -1077,6 +1128,14 @@
 }
 
 @media (max-width: 640px) {
+  .drawer {
+    padding: 1rem;
+  }
+
+  .drawer-card {
+    max-height: calc(100vh - 2rem);
+  }
+
   .form-section {
     padding: 1rem;
   }
