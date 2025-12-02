@@ -497,27 +497,87 @@
   background: rgba(99, 102, 241, 0.7);
 }
 
-@keyframes slideUp {\n  from {\n    opacity: 0;\n    transform: translateY(40px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-.form-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 1.25rem;\n  margin-top: 1.5rem;\n}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
 
-.form-grid label {\n  display: flex;\n  flex-direction: column;\n  gap: 0.5rem;\n  font-size: 0.875rem;\n  font-weight: 600;\n  color: #cbd5e1;\n}
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
 
-.form-grid label.full {\n  grid-column: 1 / -1;\n}
+.form-grid label.full {
+  grid-column: 1 / -1;
+}
 
-.form-grid input[type=\"number\"] {\n  appearance: textfield;\n}
+.form-grid input[type="number"] {
+  appearance: textfield;
+}
 
-.form-grid input[type=\"number\"]::-webkit-outer-spin-button,\n.form-grid input[type=\"number\"]::-webkit-inner-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}
+.form-grid input[type="number"]::-webkit-outer-spin-button,
+.form-grid input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-.toggle {\n  display: flex;\n  flex-direction: row;\n  align-items: center;\n  gap: 0.75rem;\n}
+.toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
 
-.toggle input[type=\"checkbox\"] {\n  width: 44px;\n  height: 24px;\n  appearance: none;\n  background: rgba(255, 255, 255, 0.1);\n  border-radius: 999px;\n  position: relative;\n  cursor: pointer;\n  transition: all 0.3s ease;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}
+.toggle input[type="checkbox"] {
+  width: 44px;
+  height: 24px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-.toggle input[type=\"checkbox\"]::before {\n  content: '';\n  position: absolute;\n  width: 18px;\n  height: 18px;\n  border-radius: 50%;\n  background: #fff;\n  top: 2px;\n  left: 2px;\n  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);\n}
+.toggle input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-.toggle input[type=\"checkbox\"]:checked {\n  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);\n  border-color: #6366f1;\n}
+.toggle input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-color: #6366f1;
+}
 
-.toggle input[type=\"checkbox\"]:checked::before {\n  left: 22px;\n}
+.toggle input[type="checkbox"]:checked::before {
+  left: 22px;
+}
 
 .login-screen {
   min-height: 100vh;
