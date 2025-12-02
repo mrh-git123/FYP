@@ -135,7 +135,13 @@ const ProductsPage = () => {
       )}
 
       {drawerOpen && (
-        <div className="drawer">
+        <div className="drawer" onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setDrawerOpen(false);
+            setEditing(null);
+            form.reset(emptyProduct);
+          }
+        }}>
           <div className="drawer-card card">
             <div className="section-heading">
               <div>
@@ -154,32 +160,99 @@ const ProductsPage = () => {
                 Close
               </button>
             </div>
-            <form onSubmit={onSubmit} className="form-grid">
-              {(['name', 'description', 'price', 'salePrice', 'category', 'stock'] as const).map((field) => (
-                <label key={field} className={field === 'description' ? 'full' : ''}>
-                  <span>{field}</span>
-                  {field === 'description' ? (
-                    <textarea rows={3} {...form.register(field)} />
-                  ) : (
-                    <input type={field.includes('price') || field === 'stock' ? 'number' : 'text'} {...form.register(field)} />
-                  )}
+            <form onSubmit={onSubmit} className="product-form">
+              <div className="form-section">
+                <h4 className="form-section-title">Basic Information</h4>
+                <div className="form-row">
+                  <label className="form-field">
+                    <span className="field-label">Product Name <span className="required">*</span></span>
+                    <input type="text" placeholder="Enter product name" {...form.register('name')} required />
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label className="form-field full">
+                    <span className="field-label">Description</span>
+                    <textarea rows={4} placeholder="Describe your product..." {...form.register('description')} />
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h4 className="form-section-title">Pricing & Inventory</h4>
+                <div className="form-row">
+                  <label className="form-field">
+                    <span className="field-label">Price <span className="required">*</span></span>
+                    <input type="number" step="0.01" min="0" placeholder="0.00" {...form.register('price')} required />
+                  </label>
+                  <label className="form-field">
+                    <span className="field-label">Sale Price</span>
+                    <input type="number" step="0.01" min="0" placeholder="0.00" {...form.register('salePrice')} />
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label className="form-field">
+                    <span className="field-label">Category</span>
+                    <input type="text" placeholder="e.g., Electronics, Fashion" {...form.register('category')} />
+                  </label>
+                  <label className="form-field">
+                    <span className="field-label">Stock</span>
+                    <input type="number" min="0" placeholder="0" {...form.register('stock')} />
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h4 className="form-section-title">Media & Tags</h4>
+                <div className="form-row">
+                  <label className="form-field full">
+                    <span className="field-label">Image URLs</span>
+                    <textarea 
+                      rows={3} 
+                      placeholder="Enter image URLs separated by commas&#10;Example: https://image1.com, https://image2.com" 
+                      {...form.register('images')} 
+                    />
+                    <span className="field-hint">Separate multiple URLs with commas</span>
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label className="form-field full">
+                    <span className="field-label">Tags</span>
+                    <input 
+                      type="text" 
+                      placeholder="trending, sale, new-arrival" 
+                      {...form.register('tags')} 
+                    />
+                    <span className="field-hint">Separate tags with commas</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <label className="toggle-field">
+                  <input type="checkbox" {...form.register('isFeatured')} />
+                  <span className="toggle-label">
+                    <strong>Mark as featured</strong>
+                    <small>Featured products appear on the homepage</small>
+                  </span>
                 </label>
-              ))}
-              <label className="full">
-                <span>Images (comma separated)</span>
-                <textarea rows={2} {...form.register('images')} />
-              </label>
-              <label className="full">
-                <span>Tags (comma separated)</span>
-                <input type="text" {...form.register('tags')} />
-              </label>
-              <label className="toggle full">
-                <input type="checkbox" {...form.register('isFeatured')} />
-                <span>Mark as featured</span>
-              </label>
-              <button type="submit" className="btn btn-primary" disabled={saveProduct.isPending}>
-                {saveProduct.isPending ? 'Saving…' : 'Save product'}
-              </button>
+              </div>
+
+              <div className="form-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    setEditing(null);
+                    form.reset(emptyProduct);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={saveProduct.isPending}>
+                  {saveProduct.isPending ? 'Saving…' : (editing ? 'Update Product' : 'Create Product')}
+                </button>
+              </div>
             </form>
           </div>
         </div>
