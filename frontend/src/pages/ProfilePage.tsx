@@ -11,10 +11,6 @@ type ProfileForm = {
   address: Address;
 };
 
-type AddressField = 'line1' | 'line2' | 'city' | 'state' | 'postalCode' | 'country';
-const addressFields: AddressField[] = ['line1', 'line2', 'city', 'state', 'postalCode', 'country'];
-type AddressPath = `address.${AddressField}`;
-
 const ProfilePage = () => {
   const { user, refreshProfile } = useAuth();
   const form = useForm<ProfileForm>({

@@ -6,7 +6,6 @@ import Hero from '../components/Hero';
 import Categories from '../components/Categories';
 import FeatureHighlights from '../components/FeatureHighlights';
 import ProductCard from '../components/ProductCard';
-import Testimonials from '../components/Testimonials';
 import SectionHeading from '../components/SectionHeading';
 import BrandMarquee from '../components/BrandMarquee';
 import CategoryShowcase from '../components/CategoryShowcase';
