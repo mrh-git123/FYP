@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, Sparkles } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import adminApi from '../api/client';
 import type { Product } from '../types';
 
@@ -30,6 +31,7 @@ type FormValues = typeof emptyProduct;
 const ProductsPage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [generatingDesc, setGeneratingDesc] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -79,6 +81,48 @@ const ProductsPage = () => {
       form.reset(emptyProduct);
     }
     setDrawerOpen(true);
+  };
+
+  const generateDescription = async () => {
+    const name = form.getValues('name');
+    const category = form.getValues('category');
+    const tags = form.getValues('tags');
+
+    if (!name) {
+      alert('Please enter a product name first');
+      return;
+    }
+
+    setGeneratingDesc(true);
+    try {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+      const prompt = `Write a compelling product description for an e-commerce website.
+
+Product Name: ${name}
+Category: ${category || 'General'}
+Tags: ${tags || 'N/A'}
+
+Requirements:
+- 2-3 paragraphs (100-150 words total)
+- Highlight key features and benefits
+- Use persuasive, engaging language
+- SEO-friendly with natural keywords
+- Professional tone suitable for online shopping
+
+Write only the description, no extra formatting or labels.`;
+
+      const result = await model.generateContent(prompt);
+      const description = result.response.text();
+      form.setValue('description', description);
+    } catch (error) {
+      console.error('AI Generation Error:', error);
+      alert('Failed to generate description. Please try again.');
+    } finally {
+      setGeneratingDesc(false);
+    }
   };
 
   const onSubmit = form.handleSubmit(async (values) => {
@@ -179,8 +223,19 @@ const ProductsPage = () => {
                 </div>
                 <div className="form-row">
                   <label className="form-field full">
-                    <span className="field-label">Description</span>
-                    <textarea rows={4} placeholder="Describe your product..." {...form.register('description')} />
+                    <div className="field-label-with-action">
+                      <span className="field-label">Description</span>
+                      <button 
+                        type="button" 
+                        className="btn btn-sm btn-ai"
+                        onClick={generateDescription}
+                        disabled={generatingDesc}
+                      >
+                        <Sparkles size={14} />
+                        {generatingDesc ? 'Generating...' : 'Generate with AI'}
+                      </button>
+                    </div>
+                    <textarea rows={6} placeholder="Describe your product..." {...form.register('description')} />
                   </label>
                 </div>
               </div>
