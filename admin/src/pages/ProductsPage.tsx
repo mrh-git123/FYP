@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus, Trash2, Sparkles } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import adminApi from '../api/client';
 import type { Product } from '../types';
 
@@ -96,10 +95,20 @@ const ProductsPage = () => {
     setGeneratingDesc(true);
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-      const prompt = `Write a compelling product description for an e-commerce website.
+      
+      // Use REST API directly instead of SDK
+      const response = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent',
+        {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `Write a compelling product description for an e-commerce website.
 
 Product Name: ${name}
 Category: ${category || 'General'}
@@ -112,10 +121,20 @@ Requirements:
 - SEO-friendly with natural keywords
 - Professional tone suitable for online shopping
 
-Write only the description, no extra formatting or labels.`;
+Write only the description, no extra formatting or labels.`
+              }]
+            }]
+          })
+        }
+      );
 
-      const result = await model.generateContent(prompt);
-      const description = result.response.text();
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Failed to generate description');
+      }
+
+      const description = data.candidates[0].content.parts[0].text;
       form.setValue('description', description);
     } catch (error) {
       console.error('AI Generation Error:', error);
