@@ -3487,6 +3487,14 @@ nav a.active {
   gap: 1.5rem;
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+}
+
 @media (max-width: 1024px) {
   .deals-section {
     grid-template-columns: 1fr;
@@ -3516,6 +3524,11 @@ nav a.active {
   
   .deals-banner {
     max-height: 250px;
+  }
+  
+  .loading-container {
+    min-height: 200px;
+    padding: 2rem 1rem;
   }
 }
 

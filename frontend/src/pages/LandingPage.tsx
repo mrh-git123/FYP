@@ -7,7 +7,6 @@ import Categories from '../components/Categories';
 import FeatureHighlights from '../components/FeatureHighlights';
 import ProductCard from '../components/ProductCard';
 import SectionHeading from '../components/SectionHeading';
-import BrandMarquee from '../components/BrandMarquee';
 import CategoryShowcase from '../components/CategoryShowcase';
 import CountdownTimer from '../components/CountdownTimer';
 import offer from '../assets/offer.png';
@@ -27,7 +26,7 @@ const LandingPage = () => {
     <main className="landing">
       <Hero />
       <Categories />
-      <BrandMarquee />
+      {/* <BrandMarquee /> */}
       <section className="section surface feature-panel">
         <SectionHeading
           eyebrow="Commerce without compromise"
@@ -51,7 +50,11 @@ const LandingPage = () => {
             <h3>WinterFEST Deals</h3>
             <Link to="/shop?featured=true" className="view-all-link">View All &rarr;</Link>
           </div>
-          {isLoading && <div className="spinner" />}
+          {isLoading && (
+            <div className="loading-container">
+              <div className="spinner" />
+            </div>
+          )}
           {!isLoading && !isError && (
             <div className="deals-grid">
               {data?.map((product) => (
